@@ -18,7 +18,7 @@ def canopen_test_pdo():
 	net.connect(bustype='usb2can', channel='69E696BD', bitrate=125000)
 
 	# Add some nodes with corresponding Object Dictionaries
-	node_lc5100 = canopen.RemoteNode(node_id=1, object_dictionary='LC5100.eds')
+	node_lc5100 = canopen.LocalNode(node_id=1, object_dictionary='LC5100.eds')
 	net.add_node(node_lc5100)
 	
 	# Set to pre-operational mode
