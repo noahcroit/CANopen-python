@@ -2,10 +2,11 @@
 This repository is used for study and test a CANOpen protocol by using Christiansandberg's CANOpen-python for THOpenSCADA project.
 Link of christian's CANOpen : http://canopen.readthedocs.io/
 
-To be able to understand CANOpen functionality. Main function of CANOpen-python has been test.
+To be able to understand CANOpen protocol. The list of main functionality in CANOpen has been tested.
 - NMT (Network Management)
 - SDO (Service Data Object)
 - PDO (Process Data Object)
+- Sync
 - Heartbeat
 - Emergency
 - etc.
