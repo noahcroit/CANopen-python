@@ -17,9 +17,9 @@ def canopen_test_sdo():
     # (see https://python-can.readthedocs.io/en/latest/bus.html).
     net.connect(bustype='usb2can', channel='69E696BD', bitrate=125000)
 
-    # Create node device. Node device should be configured as "LocalNode". 
+    # Create node device. Node device should be configured as "RemoteNode". 
     # So, Device will be able to be used as "SDO server". 
-    node_lc5100 = canopen.LocalNode(node_id=1, object_dictionary='LC5100.eds')
+    node_lc5100 = canopen.RemoteNode(node_id=1, object_dictionary='LC5100.eds')
     # Add some nodes with corresponding Object Dictionaries
     net.add_node(node_lc5100)
 
@@ -44,10 +44,15 @@ def canopen_test_sdo():
     # Iterate over arrays or records
     for value in sdo_object.values():
         print("value = {}".format(value.raw))
+    
+    heartbeat_time_consumer = node_lc5100.sdo[0x1016][1]
+    heartbeat_time_producer = node_lc5100.sdo[0x1017]
+    print("heartbeat time (consumer) : {}".format(heartbeat_time_consumer.raw))
+    print("heartbeat time (producer) : {}".format(heartbeat_time_producer.raw))
+    
+    
         
-    # Try to change object value by SDO writing
-    
-    
+        
   
 if __name__ == '__main__':
 	canopen_test_sdo()
