@@ -16,3 +16,7 @@ Repository contains a folder of each tested CANopen devices which are commonly u
 Here is the list of tested devices.
 - Beckhoff LC5100 Remote I/O
 - ... (In the future)
+
+CANOpen Interface device for testing
+- Korlan's USB2CAN
+  URL: https://www.8devices.com/products/usb2can_korlan
