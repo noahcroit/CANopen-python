@@ -5,7 +5,7 @@ import canopen
 
 def canopen_test_emergency():
     """ 
-	canopen testing : heartbeat 
+	canopen testing : emergency 
         tested device : beckhoff remote I/O LC5100
     """
     print("test emergency...")
