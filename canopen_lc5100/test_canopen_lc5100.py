@@ -8,6 +8,7 @@ import test_pdo
 import test_sdo
 import test_heartbeat
 import test_emergency
+import test_sync
 
 
 	
@@ -20,6 +21,7 @@ def main():
     group.add_argument("-s", "--sdo", help="test CANOpen : Service Data Object (SDO)", action="store_true", default=False)
     group.add_argument("-b", "--beat", help="test CANOpen : Heartbeat", action="store_true", default=False)
     group.add_argument("-e", "--emcy", help="test CANOpen : Emergency (EMCY)", action="store_true", default=False)
+    group.add_argument("-c", "--sync", help="test CANOpen : Sync", action="store_true", default=False)
     args = vars(ap.parse_args())
 
     # Choose to run test mode which the user wants to.
@@ -33,6 +35,8 @@ def main():
     	test_heartbeat.canopen_test_heartbeat()
     if args["emcy"] == True:
         test_emergency.canopen_test_emergency()
+    if args["sync"] == True:
+        test_sync.canopen_test_sync()
 
 
 
