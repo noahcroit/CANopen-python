@@ -1,8 +1,20 @@
 import time
 import canopen
+import sys
+
+
+# Flag for the time when main program wants to exit. Use in testing an emergency callback method.
+sys_exit_flag = False
 
 
 
+def emergency_callback(emergency_error):
+    global sys_exit_flag
+    print(emergency_error)
+    sys_exit_flag = True
+    
+    
+    
 def canopen_test_emergency():
     """ 
 	canopen testing : emergency 
@@ -26,20 +38,42 @@ def canopen_test_emergency():
     net.add_node(node_lc5100)
     
     # Set from pre-op to operational mode (Run mode)
-    node_lc5100.nmt.send_command(0x80)
-    time.sleep(1)
-    node_lc5100.nmt.send_command(0x01)
+    reset_cmd = 0x81
+    start_cmd = 0x01
+    node_lc5100.nmt.send_command(reset_cmd)
+    time.sleep(3)
+    node_lc5100.nmt.send_command(start_cmd)
     time.sleep(1)
     
-    # Wait until there is an emergency error occur
-    print("Do nothing until there is an emergency error...")
+    # Using Exception catch method, Wait until there is an emergency error occur
+    print("Using Exception catch method\nDo nothing until there is an emergency error...")
     try:
         while True:
             if node_lc5100.emcy.active:
                 raise node_lc5100.emcy.active[-1]
-            
+            print("Do something...")
+            time.sleep(1)
+        
     except canopen.emcy.EmcyError as e_canopen:
         print("\nEmergency occur!\n{}\n".format(e_canopen))
+    
+    # Wait until device is fixed and reset again by the user. Enter to continue.
+    userInput = input("Wait for fixing the device. Enter again to continue.")
+    node_lc5100.emcy.reset()
+    time.sleep(3)
+    node_lc5100.nmt.send_command(start_cmd)
+    time.sleep(1)
+    
+    # Using interrupt method, Wait until there is an emergency error occur
+    print("Using interrupt method (Callback function)\nDo nothing until there is an emergency error...")
+    node_lc5100.emcy.add_callback(emergency_callback)
+    global sys_exit_flag
+    while True:
+        if sys_exit_flag == True:
+            sys.exit(0)
+        print("Do something...")
+        time.sleep(1)
+        
 
 
 if __name__ == '__main__':
