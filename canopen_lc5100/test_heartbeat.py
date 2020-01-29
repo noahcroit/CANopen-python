@@ -3,6 +3,19 @@ import canopen
 
 
 
+# Time variable for finding the heartbeat wait time
+t1 = 0
+t2 = 0
+
+def heartbeat_callback(NMT_state):
+    global t1
+    global t2
+    
+    print("NMT stat code = {}".format(NMT_state))
+    t2 = time.time()
+    print("hello Heartbeat! wait duration = {}".format(t2 - t1))
+    t1 = t2
+    
 def canopen_test_heartbeat():
     """ 
 	canopen testing : heartbeat 
@@ -41,7 +54,10 @@ def canopen_test_heartbeat():
     set_time = input("enter a new heartbeat time (ms) : ")
     heartbeat_time_producer.raw = int(set_time)
     
-    # Wait for heartbeat
+    # Wait for heartbeat : Polling method
+    global t1
+    global t2
+    print("Wait for heartbeat (Polling method)")
     try:
         while True:
             t1 = time.time()
@@ -51,6 +67,18 @@ def canopen_test_heartbeat():
             
     except KeyboardInterrupt:
         print("Exit from heartbeat test")
+
+    # Wait for heartbeat : Interrupt method
+    print("Wait for heartbeat (Interrupt method)")
+    node_lc5100.nmt.add_hearbeat_callback(heartbeat_callback)
+    t1_callback = time.time()
+    try:
+        while True:
+            pass
+            
+    except KeyboardInterrupt:
+        print("Exit from heartbeat test")
+
 
 
 if __name__ == '__main__':
