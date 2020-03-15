@@ -29,6 +29,7 @@ def canopen_test_pdo():
     node_lc5100.rpdo.read()
     node_lc5100.tpdo.read()
     node_lc5100.tpdo[1].event_timer = 3
+    print(node_lc5100.tpdo[1].sync_start_value)
     node_lc5100.tpdo[1].enabled = True
     node_lc5100.tpdo.save()
     
@@ -56,10 +57,9 @@ def canopen_test_pdo():
     print("Test reading PDO to read input of Remote I/O LC5100")
     try:
         while True:
-            node_lc5100.tpdo[1].wait_for_reception()
+            timestamp = node_lc5100.tpdo[1].wait_for_reception()
             read_value = node_lc5100.tpdo[1][0x6000].raw
-            print("Read input value = {}".format(read_value))
-            time.sleep(0.5)
+            print("Read input value = {}, t={}".format(read_value, timestamp))
         
     except KeyboardInterrupt:
         print("Exit from reading PDO to LC5100")
