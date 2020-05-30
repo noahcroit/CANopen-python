@@ -21,27 +21,36 @@ CANOpen Interface device for testing
 - Korlan's USB2CAN
   URL: https://www.8devices.com/products/usb2can_korlan
 
-# How to run the demo (For Bewckhoff LC5100 Remote I/O)
+# How to run the demo
+## For Bewckhoff LC5100 Remote I/O
 1. Install CAN interface's driver
-	** For Korlan's USB2CAN
-	###### Windows
-	Install driver and use USB2CAN test application (Get from the driver installation) to test and see serial number of USB-to-CAN interface.
-	This serial number will be used in can-python.
+For Korlan's USB2CAN
+###### Windows
+Install driver and use USB2CAN test application (Get from the driver installation) to test and see serial number of USB-to-CAN interface.
+This serial number will be used in can-python.
 
-	###### Linux
-	Install driver from this repository : https://github.com/8devices/usb2can
-	Tools : Use can-util to test CAN interface. 
-		sudo apt-get install can-utils
+###### Linux
+Install driver from this repository : https://github.com/8devices/usb2can <br />
+Tools : Use can-util to test CAN interface. <br />
+```bash 
+sudo apt-get install can-utils
+```
 
-	Before using USB-to-CAN insterface with can-python, run this command to open 'SocketCAN' for USB2CAN interface
-	sudo ip link set can0 up
-	or
-	sudo ip link set can0 up type can bitrate 125000 sample-point 0.875 (For a specific bitrate and sample-point)
-
+Before using USB-to-CAN insterface with can-python, run this command to open 'SocketCAN' for USB2CAN interface <br />
+```bash
+sudo ip link set can0 up
+```
+<br />or<br />
+```bash
+sudo ip link set can0 up type can bitrate 125000 sample-point 0.875 (For a specific bitrate and sample-point) <br />
+```
 2. Run _test__canopen__lc5100_.py to test CANOpen functionality.
-	###### Example
-	(test NMT, OS=Linux)
-	python test_canopen_lc5100.py --os linux --nmt
-	(test PDO, OS=Windows)
-	python test_canopen_lc5100.py --os win --pdo
-	 
+###### Example
+(test NMT, OS=Linux) <br />
+```bash
+python test_canopen_lc5100.py --os linux --nmt
+```
+<br /> (test PDO, OS=Windows) <br />
+```bash
+python test_canopen_lc5100.py --os win --pdo
+```
