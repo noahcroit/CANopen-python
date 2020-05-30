@@ -41,9 +41,9 @@ sudo ip link set can0 up
 ```
 For a specific bitrate and sample-point <br />
 ```bash
-sudo ip link set can0 up type can bitrate 125000 sample-point 0.875  <br />
+sudo ip link set can0 up type can bitrate 125000 sample-point 0.875
 ```
-2. Run _test__canopen__lc5100_.py to test CANOpen functionality.
+2. Run test\_canopen\_lc5100.py to test CANOpen functionality.
 ###### Example
 (test NMT, OS=Linux) <br />
 ```bash
