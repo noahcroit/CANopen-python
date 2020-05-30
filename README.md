@@ -23,12 +23,11 @@ CANOpen Interface device for testing
 
 # How to run the demo
 ## For Bewckhoff LC5100 Remote I/O
-1. Install CAN interface's driver
+1. Install CAN interface's driver  <br />
 For Korlan's USB2CAN
 ###### Windows
 Install driver and use USB2CAN test application (Get from the driver installation) to test and see serial number of USB-to-CAN interface.
 This serial number will be used in can-python.
-
 ###### Linux
 Install driver from this repository : https://github.com/8devices/usb2can <br />
 Tools : Use can-util to test CAN interface. <br />
@@ -40,9 +39,9 @@ Before using USB-to-CAN insterface with can-python, run this command to open 'So
 ```bash
 sudo ip link set can0 up
 ```
-<br />or<br />
+For a specific bitrate and sample-point <br />
 ```bash
-sudo ip link set can0 up type can bitrate 125000 sample-point 0.875 (For a specific bitrate and sample-point) <br />
+sudo ip link set can0 up type can bitrate 125000 sample-point 0.875  <br />
 ```
 2. Run _test__canopen__lc5100_.py to test CANOpen functionality.
 ###### Example
