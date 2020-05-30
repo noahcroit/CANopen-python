@@ -16,7 +16,7 @@ def heartbeat_callback(NMT_state):
     print("hello Heartbeat! wait duration = {}".format(t2 - t1))
     t1 = t2
     
-def canopen_test_heartbeat():
+def canopen_test_heartbeat(user_os):
     """ 
 	canopen testing : heartbeat 
         tested device : beckhoff remote I/O LC5100
@@ -29,7 +29,13 @@ def canopen_test_heartbeat():
     # Connect to the CAN bus
     # Arguments are passed to python-can's can.interface.Bus() constructor
     # (see https://python-can.readthedocs.io/en/latest/bus.html).
-    net.connect(bustype='usb2can', channel='69E696BD', bitrate=125000)
+    # connection is depended on your OS
+    if user_os == "linux":
+    	net.connect(bustype='socketcan', channel='can0')
+    	print("connect via \'socketcan\' to can0")
+    else:
+    	net.connect(bustype='usb2can', channel='69E696BD', bitrate=125000)
+    	print("connect via \'usb2can\' to channel 69E696BD, bitrate=125000")
 
     # Check network
     net.check()
@@ -82,4 +88,5 @@ def canopen_test_heartbeat():
 
 
 if __name__ == '__main__':
-    canopen_test_heartbeat()
+    user_os = input("Choose OS of your machine, linux or win (default). : ")
+    canopen_test_heartbeat(user_os)
