@@ -21,6 +21,19 @@ CANOpen Interface device for testing
 - Korlan's USB2CAN
   URL: https://www.8devices.com/products/usb2can_korlan
 
+# Requirement
+1. CANOpen for Python <br />
+```bash
+pip install canopen
+```
+Or install with requirement.txt in this repository for all dependency modules <br />
+```bash
+pip install -r requirement_canopen.text
+```
+
+2. Driver for CAN Interface which depended on the hareware you have. The list of supported CAN interface are shown in this page <br />
+https://python-can.readthedocs.io/en/stable/interfaces.html
+
 # How to run the demo
 ## For Bewckhoff LC5100 Remote I/O
 1. Install CAN interface's driver  <br />
