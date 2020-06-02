@@ -31,8 +31,7 @@ Or install with requirement.txt in this repository for all dependency modules <b
 pip install -r requirement_canopen.text
 ```
 
-2. Driver for CAN Interface which depended on the hareware you have. The list of supported CAN interface are shown in this page <br />
-https://python-can.readthedocs.io/en/stable/interfaces.html
+2. Driver for CAN Interface which depended on the hardware you have. The list of supported CAN interface are shown in this page https://python-can.readthedocs.io/en/stable/interfaces.html
 
 # How to run the demo
 ## For Bewckhoff LC5100 Remote I/O
@@ -48,7 +47,7 @@ Tools : Use can-util to test CAN interface. <br />
 sudo apt-get install can-utils
 ```
 
-Before using USB-to-CAN insterface with can-python, run this command to open 'SocketCAN' for USB2CAN interface <br />
+Before using USB-to-CAN interface device with can-python, run this command to open 'SocketCAN' for USB2CAN interface <br />
 ```bash
 sudo ip link set can0 up
 ```
