@@ -29,15 +29,22 @@ def canopen_test_pdo(user_os):
 	
     # Set to pre-operational mode
     node_lc5100.nmt.send_command(0x80)
-    time.sleep(3)
+    time.sleep(5)
     
-    # Config PDO of node device 
+    # Config PDO of node device
+    print("Config PDO device")
     node_lc5100.rpdo.read()
     node_lc5100.tpdo.read()
-    node_lc5100.tpdo[1].event_timer = 3
-    print(node_lc5100.tpdo[1].sync_start_value)
+    print("tpdo map (before):\t{}".format(node_lc5100.tpdo[1].map))
+    print("tpdo enabled (before):\t{}".format(node_lc5100.tpdo[1].enabled))
+    #node_lc5100.rpdo[1].add_variable(0x6200, 1, 8)
+    print("tpdo map (after):\t{}".format(node_lc5100.tpdo[1].map))
+    print("tpdo enabled (after):\t{}".format(node_lc5100.tpdo[1].enabled))
+    
+    node_lc5100.tpdo[1].event_timer = 3000
     node_lc5100.tpdo[1].enabled = True
     node_lc5100.tpdo.save()
+    node_lc5100.rpdo.save()
     
     # Set to operational mode (Run mode)
     node_lc5100.nmt.send_command(0x01)
@@ -53,6 +60,7 @@ def canopen_test_pdo(user_os):
                 write_data = 0
             print("Write output value = {}".format(write_data))
             node_lc5100.rpdo[1][0x6200].raw = write_data
+            #node_lc5100.rpdo[1].raw = write_data
             node_lc5100.rpdo[1].transmit()
             time.sleep(0.5)
         
