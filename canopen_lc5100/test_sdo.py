@@ -35,9 +35,9 @@ def canopen_test_sdo(user_os):
 
     # SDO command testing by reading object of device
     # Index of SDO request are from the datasheet
-    device_type = node_lc5100.sdo[0x1000]
-    device_name = node_lc5100.sdo[0x1008]
-    device_harware_ver  = node_lc5100.sdo[0x1009]
+    device_type = node_lc5100.sdo['Device Type']
+    device_name = node_lc5100.sdo['Manufacturer Device Name']
+    device_harware_ver  = node_lc5100.sdo['Manufacturer Hardware Version']
     
     # For variable-type of return object from sdo[] can be extracted by using .raw
     print("Device type = {}".format(device_type.raw))
