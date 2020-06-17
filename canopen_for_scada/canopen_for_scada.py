@@ -19,7 +19,7 @@ class Canopen_Network_SCADA(CANOpen_Network):
         time.sleep(1)
         for node_id in self.scanner.nodes:
             print("Found node %d!" % node_id)
-            
+                
     
     
     
@@ -33,6 +33,12 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
            @param : load_od (Enable OD to be upload by SDO)
         """
         super().__init__(node_id=node_id, object_dictionary=object_dictionary, load_od=load_od)
+        
+        # initialize for PDO configuration
+        # PDO config dictionary
+        self.rxpdo_config_dict = {}
+        self.txpdo_config_dict = {}
+        
         
     def device_od_info(self):
         """
@@ -74,17 +80,16 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         """
         # Find a selected object of CANopen device by using index and sub-index
         if obj_subindex == None:
-            if obj_index >= 0:
-                obj = self.sdo[obj_index]
+            obj = self.sdo[obj_index]
                 
-                # Write raw value to the selected object
-                obj.raw = write_value
+            # Write raw value to the selected object
+            obj.raw = write_value
+            
         else:
-            if obj_index >= 0 and obj_subindex >= 0:
-                obj = self.sdo[obj_index][obj_subindex]
+            obj = self.sdo[obj_index][obj_subindex]
                 
-                # Write raw value to the selected object
-                obj.raw = write_value
+            # Write raw value to the selected object
+            obj.raw = write_value
        
         
     def SDO_read(self, obj_index=-1, obj_subindex=None):
@@ -99,67 +104,112 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         
         # Find a selected object of CANopen device by using index and sub-index
         if obj_subindex == None:
-            if obj_index >= 0:
-                obj = self.sdo[obj_index]
-                read_value = obj.raw
+            obj = self.sdo[obj_index]
+            read_value = obj.raw
+            
         else:
-            if obj_index >= 0 and obj_subindex >= 0:
-                obj = self.sdo[obj_index][obj_subindex]
-                read_value = obj.raw
+            obj = self.sdo[obj_index][obj_subindex]
+            read_value = obj.raw
                 
         # Return raw value to the selected object
         return read_value
     
-    def PDO_config(self, pdo_type='rx', pdo_channel=1, en=False):
-        print("PDO config procedure...")
+    def PDO_RxPDO_config(self, pdo_number=1, en=False, com_type='poll', event_timer=None):
+        """
+            Config TxPDO of CANOpen device for Process Data Object (PDO) 
+            @param : pdo_channel    (number of RxPDO. ex. RxPDO[1], RxPDO[2], ...)
+            @param : en             (enabled flag)
+            @param : event_timer
+        """
+        # Add all configuration to config dictionary for a later usage
+        self.rxpdo_config_dict.update({'rxpdo{}'.format(pdo_number) : {}})
+        self.rxpdo_config_dict['rxpdo{}'.format(pdo_number)].update({'enabled' : en})
+        self.rxpdo_config_dict['rxpdo{}'.format(pdo_number)].update({'com_type' : com_type})
+        self.rxpdo_config_dict['rxpdo{}'.format(pdo_number)].update({'event_timer' : event_timer})
+        
+        print("RxPDO config procedure...")
         while self.NMT_read_state() != 'PRE-OPERATIONAL':
             self.NMT_set_state(state='pre-op')
-            time.sleep(1)
+            time.sleep(3)
         
-        if pdo_type == 'rx':
-            self.rpdo.read()
-            self.rpdo[pdo_channel].enabled = en
-            self.rpdo.save()
-        elif pdo_type == 'tx':
-            self.tpdo.read()
-            self.tpdo[pdo_channel].enabled = en
-            self.tpdo.save()
+        self.rpdo.read()
+        self.rpdo[pdo_number].event_timer = event_timer
+        self.rpdo[pdo_number].enabled = en
+        if com_type == 'poll':
+            self.rpdo[pdo_number].trans_type = None
+        elif com_type == 'event':
+            self.rpdo[pdo_number].trans_type = 254
+        elif com_type == 'sync':
+            self.rpdo[pdo_number].trans_type = 0
             
-        print("PDO config procedure completed, Plz set NMT to \'Operation\' to run PDO")
+        self.rpdo.save()
+            
+        print("RxPDO config procedure completed, Please set NMT to \'Operation\' state to run PDO")
+        print(self.rxpdo_config_dict)
+        pass
+    
+    def PDO_TxPDO_config(self, pdo_number=1, en=False, com_type='poll', event_timer=None):
+        """
+            Config TxPDO of CANOpen device for Process Data Object (PDO) 
+            @param : pdo_channel    (number of RxPDO. ex. TxPDO[1], TxPDO[2], ...)
+            @param : en             (enabled flag)
+            @param : event_timer
+        """
+        print("TxPDO config procedure...")
+        while self.NMT_read_state() != 'PRE-OPERATIONAL':
+            self.NMT_set_state(state='pre-op')
+            time.sleep(3)
         
-    def PDO_write(self, pdo_channel=1, obj_index=-1, write_data=None):
+        self.tpdo.read()
+        self.tpdo[pdo_number].event_timer = event_timer
+        self.tpdo[pdo_number].enabled = en
+        if com_type == 'poll':
+            self.tpdo[pdo_number].trans_type = None
+        elif com_type == 'event':
+            self.tpdo[pdo_number].trans_type = 254
+        elif com_type == 'sync':
+            self.tpdo[pdo_number].trans_type = 0
+            
+        self.tpdo.save()
+        
+        # Add all configuration to config dictionary for a later usage
+        self.txpdo_config_dict.update({'txpdo{}'.format(pdo_number) : {}})
+        self.txpdo_config_dict['txpdo{}'.format(pdo_number)].update({'enabled' : en})
+        self.txpdo_config_dict['txpdo{}'.format(pdo_number)].update({'com_type' : com_type})
+        self.txpdo_config_dict['txpdo{}'.format(pdo_number)].update({'event_timer' : event_timer})
+        
+        print("TxPDO config procedure completed, Please set NMT to \'Operation\' state to run PDO")
+        print(self.txpdo_config_dict)
+    
+    def PDO_write(self, pdo_number=1, obj_index=-1, write_data=None):
+        """
         # Find a selected RxPDO object of CANOpen device by using pdo channel number, object index
         if obj_index >= 0:
-            obj = self.rpdo[pdo_channel][obj_index]
+            obj = self.rpdo[pdo_number][obj_index]
             
             # Write raw value to the selected RxPDO
             obj.raw = write_data
-            self.rpdo[pdo_channel].transmit()
-
-    def PDO_read(self, pdo_channel=1, obj_index=-1, pdo_mode='rf'):
-        # PDO mode
-        pdo_mode_dict = {}
-        pdo_mode_dict.update({'rf' : 'remote_frame'})
-        pdo_mode_dict.update({'ev' : 'event_driven'})
-        pdo_mode_dict.update({'sync' : 'synchronized'})
+            self.rpdo[pdo_number].transmit()
+        """
+        pass
         
-        # Default read value = None, timestamp = None
-        read_value = None
+    def PDO_read(self, pdo_number=1, obj_index=-1, timeout=10):      
+        
         timestamp = None
+        read_value = None 
         
         # Find a selected TxPDO object of CANOpen device by using pdo channel number, object index
-        if obj_index >= 0 and pdo_channel >= 0 and pdo_mode in pdo_mode_dict.keys():
-            obj = self.tpdo[pdo_channel][obj_index]
+        if obj_index >= 0 and pdo_number >= 0:
+            tpdo_obj = self.tpdo[pdo_number]
             
-            if pdo_mode_dict.get(pdo_mode) == 'remote_frame':
-                read_value = obj.raw
-            elif pdo_mode_dict.get(pdo_mode) == 'event_driven':
-                timestamp = obj.wait_for_reception(timeout=10)
-                read_value = obj.raw
+            if self.txpdo_config_dict['txpdo{}'.format(pdo_number)]['com_type'] == 'poll':
+                read_value = tpdo_obj[obj_index].raw
+                
+            elif self.txpdo_config_dict['txpdo{}'.format(pdo_number)]['com_type'] == 'event':
+                timestamp = tpdo_obj.wait_for_reception(timeout=timeout)
+                read_value = tpdo_obj[obj_index].raw
 
         return read_value, timestamp
-
-
 
 
   
@@ -177,34 +227,4 @@ if __name__ == '__main__':
     mycanopen_network.add_node(mydevice)
 
     
-    """
-    # Testing PDO
-    mydevice.PDO_config()
-    while mydevice.NMT_read_state() != 'OPERATIONAL':
-        mydevice.NMT_set_state(state='start')
-        time.sleep(1)
     
-    # Write PDO loop
-    try:
-        write_data = 0
-        while True:
-            write_data += 1
-            if write_data > 0xFF:
-                write_data = 0
-            print("Write output value = {}".format(write_data))
-            mydevice.PDO_write(pdo_channel=1, obj_index=0x6200, write_data=write_data)
-            time.sleep(0.5)
-        
-    except KeyboardInterrupt:
-        print("Exit from sending PDO to LC5100")
-    
-    # Read PDO loop
-    print("Test reading PDO to read input of Remote I/O LC5100")
-    try:
-        while True:
-            read_value, timestamp = mydevice.PDO_read(pdo_channel=1, obj_index=0x6000, pdo_mode='rf')
-            print("Read input value = {}, t={}".format(read_value, timestamp))
-        
-    except KeyboardInterrupt:
-        print("Exit from reading PDO to LC5100")
-    """
