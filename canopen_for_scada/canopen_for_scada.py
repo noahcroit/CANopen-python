@@ -149,7 +149,7 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         print("RxPDO config procedure completed, Please set NMT to \'Operation\' state to run PDO")
         print(self.rxpdo_config_dict)
     
-    def PDO_TxPDO_config(self, pdo_number=1, en=False, com_type='poll', event_timer=None, txpdo_sync_mode_callback=None):
+    def PDO_TxPDO_config(self, pdo_number=1, en=False, com_type='poll', event_timer=None, sync_id=0x80000080, sync_interval=1000000, sync_mode_callback=None):
         """
             Config TxPDO of CANOpen device for Process Data Object (PDO) 
             @param : pdo_channel    number of RxPDO. ex. TxPDO[1], TxPDO[2], ...
@@ -171,8 +171,13 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         elif com_type == 'event':
             self.tpdo[pdo_number].trans_type = 254
         elif com_type == 'sync':
+            # Config necessary SDO for SYNC mode
+            self.SDO_write(obj_index=0x1005, write_data=sync_id)
+            self.SDO_write(obj_index=0x1006, write_data=sync_interval)
+            
             self.tpdo[pdo_number].trans_type = 1
-            self.tpdo[pdo_number].add_callback(txpdo_sync_mode_callback)
+            self.tpdo[pdo_number].add_callback(sync_mode_callback)
+            
             
         self.tpdo.save()
         
