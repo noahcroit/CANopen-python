@@ -24,6 +24,7 @@ def eval_txpdo_poll(user_os):
     """
         Read PDO evaluation (transmission-type = polling)
         by access to txpdo of CANOpen device
+        tested device : beckhoff remote I/O LC5100
     """
     # Create CANOpen Network
     mycanopen_network = Canopen_Network_SCADA()
@@ -69,6 +70,7 @@ def eval_txpdo_event(user_os):
     """
         Read PDO evaluation (transmission-type = event)
         by access to txpdo of CANOpen device
+        tested device : beckhoff remote I/O LC5100
     """
     # Create CANOpen Network
     mycanopen_network = Canopen_Network_SCADA()
@@ -114,6 +116,7 @@ def eval_txpdo_sync(user_os):
     """
         Read PDO evaluation (transmission-type = sync)
         by access to txpdo of CANOpen device
+        tested device : beckhoff remote I/O LC5100
     """
     # Create CANOpen Network
     mycanopen_network = Canopen_Network_SCADA()
@@ -162,6 +165,7 @@ def eval_rxpdo_poll(user_os):
     """
         Write PDO evaluation (transmission-type = polling)
         by access to rxpdo of CANOpen device
+        tested device : beckhoff remote I/O LC5100
     """
     # Create CANOpen Network
     mycanopen_network = Canopen_Network_SCADA()
@@ -211,6 +215,7 @@ def eval_rxpdo_event(user_os):
     """
         Write PDO evaluation (transmission-type = event)
         by access to rxpdo of CANOpen device
+        tested device : beckhoff remote I/O LC5100
     """
     # Create CANOpen Network
     mycanopen_network = Canopen_Network_SCADA()

@@ -199,7 +199,7 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         """
         
         # Find a selected RxPDO object of CANOpen device by using pdo channel number, object index
-        if obj_index >= 0:
+        if obj_index != -1 and pdo_number >= 0:
             if self.rxpdo_config_dict['rxpdo{}'.format(pdo_number)]['com_type'] == 'poll':
                 # Write raw value to the selected RxPDO
                 self.rpdo[pdo_number][obj_index].raw = write_data
@@ -222,7 +222,7 @@ class Canopen_Device_SCADA(CANOpen_RemoteNode):
         read_data = None 
         
         # Find a selected TxPDO object of CANOpen device by using pdo channel number, object index
-        if obj_index >= 0 and pdo_number >= 0:
+        if obj_index != -1 and pdo_number >= 0:
             
             if self.txpdo_config_dict['txpdo{}'.format(pdo_number)]['com_type'] == 'poll':
                 read_data = self.tpdo[pdo_number][obj_index].raw
